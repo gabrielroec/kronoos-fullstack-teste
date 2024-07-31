@@ -8,10 +8,10 @@ export const uploadCsv = async (req: Request, res: Response) => {
   }
 
   const csvFile = req.files.csvFiles as any;
-  const title = req.body.title || csvFile.name;
+  const title = csvFile.name;
   const records = await parseCsv(csvFile.data.toString());
 
-  console.log(records);
+  console.log(title);
 
   const newCsvFile = new CsvFile({ title, csvFileDatas: records });
   await newCsvFile.save();
