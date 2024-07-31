@@ -26,3 +26,14 @@ export const getCsvFiles = async (req: Request, res: Response) => {
   });
   res.json(csvFiles);
 };
+
+export const getCsvFileById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const csvFile = await CsvFile.findById(id);
+
+  if (!csvFile) {
+    return res.status(404).send("File not found");
+  }
+
+  res.json(csvFile);
+};
