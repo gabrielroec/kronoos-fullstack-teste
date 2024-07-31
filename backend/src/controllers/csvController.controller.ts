@@ -18,3 +18,11 @@ export const uploadCsv = async (req: Request, res: Response) => {
 
   res.status(201).json(newCsvFile);
 };
+
+export const getCsvFiles = async (req: Request, res: Response) => {
+  const csvFiles = await CsvFile.find();
+  csvFiles.forEach((file) => {
+    console.log(file.title);
+  });
+  res.json(csvFiles);
+};
