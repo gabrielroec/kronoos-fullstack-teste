@@ -1,7 +1,8 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import fileUpload from "express-fileupload";
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const fileUpload = require("express-fileupload");
+const csvRoutes = require("./routes/csvRoutes.route");
 
 const app = express();
 
@@ -20,6 +21,8 @@ mongoose
   .then(() => {
     console.log("MongoDb is connected");
   })
-  .catch((error) => {
+  .catch((error: any) => {
     console.log(error);
   });
+
+app.use("/api/csv", csvRoutes);

@@ -3,11 +3,13 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "target": "es6",
-    "skipLibCheck": true
+    "target": "ES6",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "express-fileupload.d.ts"]
 }
