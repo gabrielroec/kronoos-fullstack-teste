@@ -11,9 +11,13 @@ export const uploadCsv = async (req: Request, res: Response) => {
   const title = csvFile.name;
   const records = await parseCsv(csvFile.data.toString());
 
+  const processedRecord = records.map((record) => {
+    return record;
+  });
+
   console.log(title);
 
-  const newCsvFile = new CsvFile({ title, csvFileDatas: records });
+  const newCsvFile = new CsvFile({ title, csvFileDatas: processedRecord });
   await newCsvFile.save();
 
   res.status(201).json(newCsvFile);
