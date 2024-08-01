@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import CsvFile from "../models/CsvFile.model";
 import { parseCsv } from "../utils/csvParser.util";
 import { isValidCpfOrCnpj } from "../utils/validateCpfCnpj.util";
+import { formatCurrency } from "../utils/formatCurrency.util";
 
 export const uploadCsv = async (req: Request, res: Response) => {
   if (!req.files || !req.files.csvFiles) {
@@ -15,6 +16,16 @@ export const uploadCsv = async (req: Request, res: Response) => {
   const processedRecord = records.map((record) => {
     const validationResult = isValidCpfOrCnpj(record.nrCpfCnpj);
     record.nrCpfCnpj = validationResult.formattedValue;
+
+    record.vlTotal = parseFloat(record.vlTotal);
+    record.vlPresta = parseFloat(record.vlPresta);
+    record.vlMora = parseFloat(record.vlMora);
+    record.vlMulta = parseFloat(record.vlMulta);
+    record.vlOutAcr = parseFloat(record.vlOutAcr);
+    record.vlIof = parseFloat(record.vlIof);
+    record.vlDescon = parseFloat(record.vlDescon);
+    record.vlAtual = parseFloat(record.vlAtual);
+
     return record;
   });
   console.log(title);
@@ -35,11 +46,29 @@ export const getCsvFiles = async (req: Request, res: Response) => {
 
 export const getCsvFileById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const csvFile = await CsvFile.findById(id);
 
-  if (!csvFile) {
-    return res.status(404).send("File not found");
+  try {
+    const csvFile = await CsvFile.findById(id).lean();
+
+    if (!csvFile) {
+      return res.status(404).send("File not found");
+    }
+
+    const formattedData = csvFile.csvFileDatas.map((record: any) => ({
+      ...record,
+      vlTotal: `R$${formatCurrency(record.vlTotal)}`,
+      vlPresta: `R$${formatCurrency(record.vlPresta)}`,
+      vlMora: `R$${formatCurrency(record.vlMora)}`,
+      vlMulta: `R$${formatCurrency(record.vlMulta)}`,
+      vlOutAcr: `R$${formatCurrency(record.vlOutAcr)}`,
+      vlIof: `R$${formatCurrency(record.vlIof)}`,
+      vlDescon: `R$${formatCurrency(record.vlDescon)}`,
+      vlAtual: `R$${formatCurrency(record.vlAtual)}`,
+    }));
+
+    res.json({ ...csvFile, csvFileDatas: formattedData });
+  } catch (error) {
+    console.error("Error fetching CSV file:", error);
+    res.status(500).send("Internal server error");
   }
-
-  res.json(csvFile);
 };
