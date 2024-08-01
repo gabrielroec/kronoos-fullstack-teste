@@ -1,6 +1,5 @@
 const validateCpf = (cpf: string): boolean => {
   if (typeof cpf !== "string") return false;
-
   cpf = cpf.replace(/[\s.-]*/g, "");
 
   if (
@@ -56,11 +55,17 @@ const validateCpf = (cpf: string): boolean => {
   return true;
 };
 
+const formatCpf = (cpf: string): string => {
+  cpf = cpf.replace(/\D/g, "");
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+};
+
 export const isValidCpfOrCnpj = (
   value: string
 ): { isValid: boolean; formattedValue: string } => {
   if (value.length === 11 && validateCpf(value)) {
-    return { isValid: true, formattedValue: `Válido: ${value}` };
+    const formattedCpf = formatCpf(value);
+    return { isValid: true, formattedValue: `Válido: ${formattedCpf}` };
   }
   return { isValid: false, formattedValue: `Inválido: ${value}` };
 };
