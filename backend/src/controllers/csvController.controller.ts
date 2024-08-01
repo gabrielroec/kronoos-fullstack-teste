@@ -96,3 +96,20 @@ export const getCsvFileById = async (req: Request, res: Response) => {
     res.status(500).send("Internal server error");
   }
 };
+
+export const deleteCsvFile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const deletedFile = await CsvFile.findByIdAndDelete(id);
+
+    if (!deletedFile) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    res.status(200).json({ message: "File deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting CSV file:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

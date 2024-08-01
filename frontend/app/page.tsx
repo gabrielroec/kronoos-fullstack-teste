@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCsvFiles,
   fetchCsvFileById,
+  deleteCsvFileById,
 } from "./redux/actions/reduxCsvActions";
 import UploadCsv from "@/components/CsvUploader";
 import CsvTable from "@/components/CsvTable";
@@ -20,11 +21,13 @@ import { Label } from "@/components/ui/label";
 import { Pagination } from "@/components/Pagination";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const Page = () => {
   const [progress, setProgress] = useState<number>(0);
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [hoveredFileId, setHoveredFileId] = useState<string | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
   const { files, selectedFile, loading, error } = useSelector(
@@ -57,6 +60,12 @@ const Page = () => {
     setProgress(0);
   };
 
+  const handleDeleteFile = async (id: string) => {
+    await dispatch(deleteCsvFileById(id));
+    setSelectedFileId(null);
+    dispatch(fetchCsvFiles());
+  };
+
   const handlePage = (page: number) => {
     setCurrentPage(page);
   };
@@ -81,18 +90,34 @@ const Page = () => {
     <div className="px-10">
       <div className="flex flex-col items-center justify-center">
         <UploadCsv onLoadingChange={setIsUploading} />{" "}
-        {/* Passe a função para atualizar o estado */}
         <div className="w-fit">
           <Label>Arquivos recentes</Label>
           <div className="flex gap-2">
             {files.map((file: any) => (
-              <Button
+              <div
                 key={file._id}
-                onClick={() => handleFileSelect(file._id)}
-                variant={file._id === selectedFileId ? "default" : "outline"}
+                className="flex gap-1 items-center"
+                onMouseEnter={() => setHoveredFileId(file._id)}
+                onMouseLeave={() => setHoveredFileId(null)}
               >
-                {file.title}
-              </Button>
+                <Button
+                  onClick={() => handleFileSelect(file._id)}
+                  variant={file._id === selectedFileId ? "default" : "outline"}
+                  className="transition-all relative hover:pr-20"
+                >
+                  {file.title}
+
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDeleteFile(file._id)}
+                    className={`transition-all absolute right-0 ${
+                      hoveredFileId === file._id ? "opacity-100 " : "opacity-0 "
+                    }`}
+                  >
+                    <FaRegTrashAlt />
+                  </Button>
+                </Button>
+              </div>
             ))}
           </div>
         </div>

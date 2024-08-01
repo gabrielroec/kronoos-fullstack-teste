@@ -1,5 +1,4 @@
 import api from "@/utils/api";
-
 import {
   fetchCsvFilesRequest,
   fetchCsvFilesSuccess,
@@ -53,3 +52,13 @@ export const uploadCsv = (file: File) => async (dispatch: AppDispatch) => {
     throw error;
   }
 };
+
+export const deleteCsvFileById =
+  (id: string) => async (dispatch: AppDispatch) => {
+    try {
+      await api.delete(`/api/csv/delete/${id}`);
+      dispatch(fetchCsvFiles());
+    } catch (error) {
+      console.error("Erro ao deletar arquivo CSV:", error);
+    }
+  };
