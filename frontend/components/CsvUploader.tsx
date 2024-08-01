@@ -18,7 +18,9 @@ const UploadCsv: FC<UploadCsvProps> = ({ onLoadingChange }) => {
   const [message, setMessage] = useState<string | null>(null);
   const [messageT, setMessageT] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [variant, setVariant] = useState<string>("");
+  const [variant, setVariant] = useState<"destructive" | "default" | null>(
+    null
+  );
   const [show, setShow] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const dispatch = useDispatch<AppDispatch>();
@@ -59,7 +61,7 @@ const UploadCsv: FC<UploadCsvProps> = ({ onLoadingChange }) => {
       await dispatch(fetchCsvFiles());
 
       setProgress(100);
-      setVariant("");
+      setVariant("default");
       setMessageT("Arquivo enviado com sucesso!");
       setMessage(
         "Seu arquivo foi enviado com sucesso e está sendo processado na tabela abaixo."
@@ -97,7 +99,7 @@ const UploadCsv: FC<UploadCsvProps> = ({ onLoadingChange }) => {
         />
       )}
 
-      {show && (
+      {show && variant && (
         <Alert variant={variant} className="w-[100%] my-10 mx-auto">
           <Terminal className="h-4 w-4" />
           <AlertTitle>{messageT}</AlertTitle>
