@@ -204,7 +204,7 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
     <div className="mt-10">
       <div className="mb-4 flex flex-col gap-10">
         <Label>Filtrar por:</Label>
-        <div className="flex items-center gap-4 relative">
+        <div className="flex items-center gap-4 ">
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Nr Inst</Label>
             <Input
@@ -246,12 +246,9 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
               className="text-sm p-1 border rounded"
             />
           </div>
-
-          <Button
-            variant="outline"
-            onClick={clearFilters}
-            className="absolute right-0 bottom-[4pxpx]"
-          >
+        </div>
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={clearFilters}>
             Limpar Filtros
           </Button>
         </div>
