@@ -1,41 +1,55 @@
 import api from "@/utils/api";
 
 import {
-  fetchCsvDataRequest,
-  fetchCsvDataSuccess,
-  fetchCsvDataFailure,
+  fetchCsvFilesRequest,
+  fetchCsvFilesSuccess,
+  fetchCsvFilesFailure,
+  fetchCsvFileRequest,
+  fetchCsvFileSuccess,
+  fetchCsvFileFailure,
 } from "../reducers/reduxCsvReducer";
 
 import { AppDispatch } from "../store";
 
-export const fetchCsvData =
-  (page: number, limit: number) => async (dispatch: AppDispatch) => {
-    dispatch(fetchCsvDataRequest());
+export const fetchCsvFiles = () => async (dispatch: AppDispatch) => {
+  dispatch(fetchCsvFilesRequest());
+
+  try {
+    const response = await api.get("/api/csv/get");
+    dispatch(fetchCsvFilesSuccess(response.data));
+  } catch (error: any) {
+    dispatch(fetchCsvFilesFailure(error.message));
+  }
+};
+
+export const fetchCsvFileById =
+  (id: string) => async (dispatch: AppDispatch) => {
+    dispatch(fetchCsvFileRequest());
 
     try {
-      const request = await api.get(`api/data?page=${page}&limit=${limit}`);
-      dispatch(fetchCsvDataSuccess(request.data));
+      const response = await api.get(`/api/csv/get/${id}`);
+      dispatch(fetchCsvFileSuccess(response.data));
     } catch (error: any) {
-      dispatch(fetchCsvDataFailure(error.message));
+      dispatch(fetchCsvFileFailure(error.message));
     }
   };
 
 export const uploadCsv = (file: File) => async (dispatch: AppDispatch) => {
-  dispatch(fetchCsvDataRequest());
+  dispatch(fetchCsvFilesRequest());
 
   try {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("csvFiles", file);
 
-    const request = await api.post("/api/upload", formData, {
+    const response = await api.post("/api/csv/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    dispatch(fetchCsvDataSuccess(request.data));
+    dispatch(fetchCsvFilesSuccess([response.data]));
   } catch (error: any) {
-    dispatch(fetchCsvDataFailure(error.message));
+    dispatch(fetchCsvFilesFailure(error.message));
     throw error;
   }
 };

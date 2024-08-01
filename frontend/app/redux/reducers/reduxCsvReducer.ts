@@ -1,44 +1,54 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CsvState {
-  data: any[];
+  files: any[];
+  selectedFile: any | null;
   loading: boolean;
   error: string | null;
-  total: number;
-  pages: number;
 }
 
 const initialState: CsvState = {
-  data: [],
+  files: [],
+  selectedFile: null,
   loading: false,
   error: null,
-  total: 0,
-  pages: 0,
 };
 
 const csvSlice = createSlice({
   name: "csv",
   initialState,
   reducers: {
-    fetchCsvDataRequest(state) {
+    fetchCsvFilesRequest(state) {
       state.loading = true;
     },
-    fetchCsvDataSuccess(
-      state,
-      action: PayloadAction<{ data: any[]; total: number; pages: number }>
-    ) {
+    fetchCsvFilesSuccess(state, action: PayloadAction<any[]>) {
       state.loading = false;
-      state.data = action.payload.data;
-      state.total = action.payload.total;
-      state.pages = action.payload.pages;
+      state.files = action.payload;
     },
-    fetchCsvDataFailure(state, action: PayloadAction<string>) {
+    fetchCsvFilesFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    fetchCsvFileRequest(state) {
+      state.loading = true;
+    },
+    fetchCsvFileSuccess(state, action: PayloadAction<any>) {
+      state.loading = false;
+      state.selectedFile = action.payload;
+    },
+    fetchCsvFileFailure(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload;
     },
   },
 });
 
-export const { fetchCsvDataRequest, fetchCsvDataSuccess, fetchCsvDataFailure } =
-  csvSlice.actions;
+export const {
+  fetchCsvFilesRequest,
+  fetchCsvFilesSuccess,
+  fetchCsvFilesFailure,
+  fetchCsvFileRequest,
+  fetchCsvFileSuccess,
+  fetchCsvFileFailure,
+} = csvSlice.actions;
 export default csvSlice.reducer;

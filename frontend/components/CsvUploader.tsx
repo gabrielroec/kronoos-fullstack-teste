@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
-import { uploadCsv, fetchCsvData } from "@/app/redux/actions/reduxCsvActions";
+import { uploadCsv, fetchCsvFiles } from "@/app/redux/actions/reduxCsvActions";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -9,7 +9,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-const UploadCsv: FC = () => {
+interface UploadCsvProps {
+  onLoadingChange: (loading: boolean) => void;
+}
+
+const UploadCsv: FC<UploadCsvProps> = ({ onLoadingChange }) => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [messageT, setMessageT] = useState<string | null>(null);
@@ -37,6 +41,7 @@ const UploadCsv: FC = () => {
     }
 
     setIsLoading(true);
+    onLoadingChange(true);
     setMessage(null);
     setMessageT(null);
     setProgress(0);
@@ -50,7 +55,9 @@ const UploadCsv: FC = () => {
     try {
       await dispatch(uploadCsv(file));
       setFile(null);
-      dispatch(fetchCsvData(1, 50));
+
+      await dispatch(fetchCsvFiles());
+
       setProgress(100);
       setVariant("");
       setMessageT("Arquivo enviado com sucesso!");
@@ -64,6 +71,7 @@ const UploadCsv: FC = () => {
         setProgress(100);
         setTimeout(() => {
           setIsLoading(false);
+          onLoadingChange(false);
         }, 1000);
       }, 1000);
       setShow(true);
@@ -74,7 +82,7 @@ const UploadCsv: FC = () => {
     <div>
       <form
         onSubmit={handleSubmit}
-        className="flex items-end gap-2 justify-center my-20"
+        className="flex items-end gap-2 justify-center mt-20 mb-10"
       >
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="csvFile">Selecione o seu arquivo Csv</Label>
@@ -85,12 +93,12 @@ const UploadCsv: FC = () => {
       {isLoading && (
         <Progress
           value={progress}
-          className="w-[50%] m-auto relative -top-11"
+          className="w-[100%] my-10 mx-auto transition-all duration-500 ease-in-out"
         />
       )}
 
       {show && (
-        <Alert variant={variant} className="w-[50%] m-auto relative -top-10">
+        <Alert variant={variant} className="w-[100%] my-10 mx-auto">
           <Terminal className="h-4 w-4" />
           <AlertTitle>{messageT}</AlertTitle>
           <AlertDescription>{message}</AlertDescription>

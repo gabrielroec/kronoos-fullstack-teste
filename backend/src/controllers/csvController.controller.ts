@@ -18,6 +18,19 @@ export const uploadCsv = async (req: Request, res: Response) => {
     const validationResult = isValidCpfOrCnpj(record.nrCpfCnpj);
     record.nrCpfCnpj = validationResult.formattedValue;
 
+    record.dtContrato = new Date(
+      `${record.dtContrato.substring(0, 4)}-${record.dtContrato.substring(
+        4,
+        6
+      )}-${record.dtContrato.substring(6, 8)}`
+    );
+    record.dtVctPre = new Date(
+      `${record.dtVctPre.substring(0, 4)}-${record.dtVctPre.substring(
+        4,
+        6
+      )}-${record.dtVctPre.substring(6, 8)}`
+    );
+
     record.vlTotal = parseFloat(record.vlTotal);
     record.vlPresta = parseFloat(record.vlPresta);
     record.vlMora = parseFloat(record.vlMora);
