@@ -73,96 +73,116 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
   };
 
   const tableRows = () => {
-    return filteredData.map((item, index) => (
-      <tr key={index} className="hover:bg-gray-100">
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrInst}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrAgencia}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.cdClient}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nmClient}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrCpfCnpj}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrContrato}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.cdProduto}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.dsProduto}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.cdCarteira}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.dsCarteira}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrProposta}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.idSituac}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.idSitVen}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.qtPrestacoes}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrPresta}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.tpPresta}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.nrSeqPre}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlTotal}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlPresta}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlMora}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlMulta}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlOutAcr}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlIof}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlDescon}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.vlAtual}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.installmentStatus}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.dtContrato
-            ? format(new Date(item.dtContrato), "dd/MM/yyyy")
-            : ""}
-        </td>
-        <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
-          {item.dtVctPre ? format(new Date(item.dtVctPre), "dd/MM/yyyy") : ""}
-        </td>
-      </tr>
-    ));
+    return filteredData.map((item, index) => {
+      const statusColor =
+        item.installmentStatus === "Consistente"
+          ? "text-green-500"
+          : "text-yellow-500";
+
+      const cpfCnpjColor = item.nrCpfCnpj.includes("Válido")
+        ? "text-green-500"
+        : "text-yellow-500";
+
+      const sitVenColor = item.idSitVen.includes("Paga")
+        ? "text-green-500"
+        : "text-yellow-500";
+      return (
+        <tr key={index} className="hover:bg-gray-100">
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nrInst}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nrAgencia}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.cdClient}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nmClient}
+          </td>
+          <td
+            className={`px-2 text-center py-2 border-b border-gray-200 text-xs ${cpfCnpjColor}`}
+          >
+            {item.nrCpfCnpj}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nrContrato}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.cdProduto}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.dsProduto}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.cdCarteira}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.dsCarteira}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nrProposta}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.idSituac}
+          </td>
+          <td
+            className={`px-2 text-center py-2 border-b border-gray-200 text-xs ${sitVenColor}`}
+          >
+            {item.idSitVen}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.qtPrestacoes}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nrPresta}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.tpPresta}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.nrSeqPre}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlTotal}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlPresta}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlMora}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlMulta}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlOutAcr}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlIof}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlDescon}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.vlAtual}
+          </td>
+          <td
+            className={`px-2 text-center py-2 border-b border-gray-200 text-xs ${statusColor}`}
+          >
+            {item.installmentStatus}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.dtContrato
+              ? format(new Date(item.dtContrato), "dd/MM/yyyy")
+              : ""}
+          </td>
+          <td className="px-2 text-center py-2 border-b border-gray-200 text-xs">
+            {item.dtVctPre ? format(new Date(item.dtVctPre), "dd/MM/yyyy") : ""}
+          </td>
+        </tr>
+      );
+    });
   };
   return (
     <div className="mt-10">
