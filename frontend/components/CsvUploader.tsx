@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
 import { uploadCsv, fetchCsvFiles } from "@/app/redux/actions/reduxCsvActions";
@@ -79,6 +79,16 @@ const UploadCsv: FC<UploadCsvProps> = ({ onLoadingChange }) => {
       setShow(true);
     }
   };
+
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(() => {
+        setShow(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
 
   return (
     <div>
