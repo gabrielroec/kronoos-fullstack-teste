@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import CsvFile from "../models/CsvFile.model";
 import { parseCsv } from "../utils/csvParser.util";
+import { isValidCpfOrCnpj } from "../utils/validateCpfCnpj.util";
 
 export const uploadCsv = async (req: Request, res: Response) => {
   if (!req.files || !req.files.csvFiles) {
@@ -12,9 +13,10 @@ export const uploadCsv = async (req: Request, res: Response) => {
   const records = await parseCsv(csvFile.data.toString());
 
   const processedRecord = records.map((record) => {
+    const validationResult = isValidCpfOrCnpj(record.nrCpfCnpj);
+    record.nrCpfCnpj = validationResult.formattedValue;
     return record;
   });
-
   console.log(title);
 
   const newCsvFile = new CsvFile({ title, csvFileDatas: processedRecord });
