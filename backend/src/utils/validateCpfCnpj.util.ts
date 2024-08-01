@@ -1,31 +1,66 @@
-import validator, { cpf, cnpj } from "cpf-cnpj-validator";
-const Joi = require("@hapi/joi").extend(validator);
+const validateCpf = (cpf: string): boolean => {
+  if (typeof cpf !== "string") return false;
 
-const cnpjSchema = Joi.document().cnpj();
-const cpfSchema = Joi.document().cpf();
+  cpf = cpf.replace(/[\s.-]*/g, "");
+
+  if (
+    !cpf ||
+    cpf.length !== 11 ||
+    cpf === "00000000000" ||
+    cpf === "11111111111" ||
+    cpf === "22222222222" ||
+    cpf === "33333333333" ||
+    cpf === "44444444444" ||
+    cpf === "55555555555" ||
+    cpf === "66666666666" ||
+    cpf === "77777777777" ||
+    cpf === "88888888888" ||
+    cpf === "99999999999"
+  ) {
+    return false;
+  }
+
+  let sum = 0;
+  let remainder: number;
+
+  for (let i = 1; i <= 9; i++) {
+    sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+
+  remainder = (sum * 10) % 11;
+
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+
+  if (remainder !== parseInt(cpf.substring(9, 10))) {
+    return false;
+  }
+
+  sum = 0;
+
+  for (let i = 1; i <= 10; i++) {
+    sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+
+  remainder = (sum * 10) % 11;
+
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+
+  if (remainder !== parseInt(cpf.substring(10, 11))) {
+    return false;
+  }
+
+  return true;
+};
 
 export const isValidCpfOrCnpj = (
   value: string
-): { formattedValue: string; isValid: boolean } => {
-  const cleanValue = value.replace(/[^\d]+/g, "");
-
-  if (cleanValue.length === 11) {
-    const { error } = cpfSchema.validate(cleanValue);
-    const formattedValue = cpf.format(cleanValue);
-    if (error) {
-      return { formattedValue: `${formattedValue} Inválido`, isValid: false };
-    } else {
-      return { formattedValue: `${formattedValue} Válido`, isValid: true };
-    }
-  } else if (cleanValue.length === 14) {
-    const { error } = cnpjSchema.validate(cleanValue);
-    const formattedValue = cnpj.format(cleanValue);
-    if (error) {
-      return { formattedValue: `${formattedValue} Inválido`, isValid: false };
-    } else {
-      return { formattedValue: `${formattedValue} Válido`, isValid: true };
-    }
-  } else {
-    return { formattedValue: `${value} Inválido`, isValid: false };
+): { isValid: boolean; formattedValue: string } => {
+  if (value.length === 11 && validateCpf(value)) {
+    return { isValid: true, formattedValue: `Válido: ${value}` };
   }
+  return { isValid: false, formattedValue: `Inválido: ${value}` };
 };
