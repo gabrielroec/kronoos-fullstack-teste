@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import { Label } from "./ui/label";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
@@ -50,6 +50,11 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
   const [filters, setFilters] = useState<FilterChooses>({});
   const [filteredData, setFilteredData] = useState(data);
 
+  const nrInstRef = useRef<HTMLInputElement>(null);
+  const nrAgenciaRef = useRef<HTMLInputElement>(null);
+  const dtContratoRef = useRef<HTMLInputElement>(null);
+  const dtVctPreRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     let result = data.filter((item) =>
       Object.entries(filters).every(([key, value]) =>
@@ -64,6 +69,17 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
     const hasFilters = Object.values(filters).some((value) => value);
     onFilterChange(hasFilters);
   }, [filters, data, onFilterChange]);
+
+  const clearFilters = () => {
+    setFilters({});
+    setFilteredData(data);
+    onFilterChange(false);
+
+    if (nrInstRef.current) nrInstRef.current.value = "";
+    if (nrAgenciaRef.current) nrAgenciaRef.current.value = "";
+    if (dtContratoRef.current) dtContratoRef.current.value = "";
+    if (dtVctPreRef.current) dtVctPreRef.current.value = "";
+  };
 
   const handleFilterChange = (field: keyof FilterChooses, value: string) => {
     setFilters((prev) => ({
@@ -188,10 +204,11 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
     <div className="mt-10">
       <div className="mb-4 flex flex-col gap-10">
         <Label>Filtrar por:</Label>
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-4 relative">
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Nr Inst</Label>
             <Input
+              ref={nrInstRef}
               type="text"
               placeholder="Nr Inst"
               onChange={(e) => handleFilterChange("nrInst", e.target.value)}
@@ -202,6 +219,7 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Nr Agência</Label>
             <Input
+              ref={nrAgenciaRef}
               type="text"
               placeholder="Nr Agência"
               onChange={(e) => handleFilterChange("nrAgencia", e.target.value)}
@@ -212,6 +230,7 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Dt Contrato</Label>
             <Input
+              ref={dtContratoRef}
               type="date"
               onChange={(e) => handleFilterChange("dtContrato", e.target.value)}
               className="text-sm p-1 border rounded"
@@ -221,11 +240,20 @@ const CsvTable: FC<CsvTableProps> = ({ data, onFilterChange }) => {
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Dt Vencimento Prestação</Label>
             <Input
+              ref={dtVctPreRef}
               type="date"
               onChange={(e) => handleFilterChange("dtVctPre", e.target.value)}
               className="text-sm p-1 border rounded"
             />
           </div>
+
+          <Button
+            variant="outline"
+            onClick={clearFilters}
+            className="absolute right-0 bottom-[4pxpx]"
+          >
+            Limpar Filtros
+          </Button>
         </div>
       </div>
       <div className="overflow-x-auto shadow-md mt-10">
