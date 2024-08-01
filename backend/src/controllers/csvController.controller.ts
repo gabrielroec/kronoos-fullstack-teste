@@ -3,6 +3,7 @@ import CsvFile from "../models/CsvFile.model";
 import { parseCsv } from "../utils/csvParser.util";
 import { isValidCpfOrCnpj } from "../utils/validateCpfCnpj.util";
 import { formatCurrency } from "../utils/formatCurrency.util";
+import { validateInstallment } from "../utils/validadeInstallments.util";
 
 export const uploadCsv = async (req: Request, res: Response) => {
   if (!req.files || !req.files.csvFiles) {
@@ -25,6 +26,16 @@ export const uploadCsv = async (req: Request, res: Response) => {
     record.vlIof = parseFloat(record.vlIof);
     record.vlDescon = parseFloat(record.vlDescon);
     record.vlAtual = parseFloat(record.vlAtual);
+
+    const isInstallmentValid = validateInstallment(
+      record.vlTotal,
+      record.qtPrestacoes,
+      record.vlPresta
+    );
+
+    record.installmentStatus = isInstallmentValid
+      ? "Consistente"
+      : "Inconsistente";
 
     return record;
   });

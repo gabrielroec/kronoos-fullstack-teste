@@ -28,6 +28,7 @@ interface ICsvFileDatas {
   vlAtual: number;
   idSituac: string;
   idSitVen: string;
+  installmentStatus: string;
 }
 
 interface ICsvFile extends Document {
@@ -63,6 +64,7 @@ const csvFileDataSchema = new Schema<ICsvFileDatas>({
   vlAtual: Number,
   idSituac: String,
   idSitVen: String,
+  installmentStatus: String,
 });
 
 const csvFileSchema = new Schema<ICsvFile>({
